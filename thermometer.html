@@ -40,8 +40,9 @@ $(function() {
         max: 100,
         min:25,
         scaleTickLabelText: 1.75,
-        scaleLabelText: 1.8,
-        scaleTickWidth: 1.5
+        scaleLabelText: 1.2,
+        scaleTickWidth: 1.5,
+        unitsLabel: "lbs"
     });
 
 
@@ -73,6 +74,8 @@ $(function() {
     var h = $('#demo2').height();
 
     var g2 = new ThermometerGuage($('#demo2')[0], {
+        scaleLabelText: 0.9,
+        unitsLabel: "pH"
         //color: {
         //    fill: "rgba(0,255,0,1)",
         //    label: '#999'
@@ -111,33 +114,42 @@ function ThermometerGuage(canvas, options) {
     this.settings = {
         w: canvas.width,
         h: canvas.height,
-        max: 1,
-        min: 0,
-        gradient: false,
-        opacity: 180,
-        debug: false,
         ctx: this.ctx,
-        color: {
-            fill: '#ff0000',
-            label: 'rgba(45,45,45,1)',
-            outline: 'rgba(0,0,0,0.5)',
-            outlineFill: 'rgba(0,128,255,0.2)',
-            tick: 'black'
-        },
-        bulbRadiusProportion: 0.1,
-        bulbRadiusByHeight: false,
         bulbRadius: function() {
-            return ((this.bulbRadiusByHeight || false) ? this.h : this.w) * this.bulbRadiusProportion;
-        },
-        majorTicks: 5,
-        minorTicks: 4,
-        centerTicks: false,
-        scaleTickLabelText: 1,
-        scaleLabelText: 1,
-        scaleTickWidth: 1
-
+                return ((this.bulbRadiusByHeight || false) ? this.h : this.w) * this.bulbRadiusProportion;
+            },
+        color: {}
     };
-
+    //this.settings = {
+    //    w: canvas.width,
+    //    h: canvas.height,
+    //    max: 1,
+    //    min: 0,
+    //    gradient: false,
+    //    opacity: 180,
+    //    debug: false,
+    //    ctx: this.ctx,
+    //    color: {
+    //        fill: '#ff0000',
+    //        label: 'rgba(45,45,45,1)',
+    //        outline: 'rgba(0,0,0,0.5)',
+    //        outlineFill: 'rgba(0,128,255,0.2)',
+    //        tick: 'black'
+    //    },
+    //    bulbRadiusProportion: 0.1,
+    //    bulbRadiusByHeight: false,
+    //    bulbRadius: function() {
+    //        return ((this.bulbRadiusByHeight || false) ? this.h : this.w) * this.bulbRadiusProportion;
+    //    },
+    //    majorTicks: 5,
+    //    minorTicks: 4,
+    //    centerTicks: false,
+    //    scaleTickLabelText: 1,
+    //    scaleLabelText: 1,
+    //    scaleTickWidth: 1
+    //
+    //};
+    
     function draw(val) {
         var max = that.settings.max;
         var min = that.settings.min;
@@ -153,7 +165,6 @@ function ThermometerGuage(canvas, options) {
         clearCanvas();
         drawThermometerContainer();
         redrawFill();
-        //drawThermometerContainer();
     };
 
     function getFillTo() {
@@ -174,14 +185,36 @@ function ThermometerGuage(canvas, options) {
         throw "fillText() not supported!";
     };
 
-
     function clearCanvas() {
         that.ctx.clearRect(0, 0, that.settings.w, that.settings.h);
     };
 
-
     function setOptions(options) {
-        jQuery.extend(true, that.settings, options);
+        //jQuery.extend(true, that.settings, options);  //the easy way, but depends on jQuery
+            options.color = options.color || {};
+            that.settings.w                     =  options.w                     || that.settings.w;
+            that.settings.h                     =  options.h                     || that.settings.h;
+            that.settings.ctx                   =  options.ctx                   || that.settings.ctx;
+            that.settings.max                   =  options.max                   || that.settings.max                    ||  1;
+            that.settings.min                   =  options.min                   || that.settings.min                    ||  0;
+            that.settings.gradient              =  options.gradient              || that.settings.gradient               ||  false;
+            that.settings.opacity               =  options.opacity               || that.settings.opacity                ||  180;
+            that.settings.debug                 =  options.debug                 || that.settings.debug                  ||  false;
+            that.settings.color.fill            =  options.color.fill            || that.settings.color.fill             ||  '#ff0000';
+            that.settings.color.label           =  options.color.label           || that.settings.color.label            ||  'rgba(45,45,45,1)';
+            that.settings.color.outline         =  options.color.outline         || that.settings.color.outline          ||  'rgba(0,0,0,0.5)';
+            that.settings.color.outlineFill     =  options.color.outlineFill     || that.settings.color.outlineFill      ||  'rgba(0,128,255,0.2)';
+            that.settings.color.tick            =  options.color.tick            || that.settings.color.tick             ||  'black';
+            that.settings.bulbRadiusProportion  =  options.bulbRadiusProportion  || that.settings.bulbRadiusProportion   ||  0.1;
+            that.settings.bulbRadiusByHeight    =  options.bulbRadiusByHeight    || that.settings.bulbRadiusByHeight     ||  false;
+            that.settings.majorTicks            =  options.majorTicks            || that.settings.majorTicks             ||  5;
+            that.settings.minorTicks            =  options.minorTicks            || that.settings.minorTicks             ||  4;
+            that.settings.centerTicks           =  options.centerTicks           || that.settings.centerTicks            ||  false;
+            that.settings.scaleTickLabelText    =  options.scaleTickLabelText    || that.settings.scaleTickLabelText     ||  1;
+            that.settings.scaleLabelText        =  options.scaleLabelText        || that.settings.scaleLabelText         ||  1;
+            that.settings.scaleTickWidth        =  options.scaleTickWidth        || that.settings.scaleTickWidth         ||  1;
+            that.settings.unitsLabel            =  options.unitsLabel            || that.settings.unitsLabel             ||  "";
+
         var config = that.settings;
         var h = config.h;
         var bR = config.bulbRadius(); //20
@@ -211,8 +244,8 @@ function ThermometerGuage(canvas, options) {
         var tVC = config.topVerticalCenter;
         
         ctx.save();
-        ctx.strokeStyle = "rgba(200,0,0,1)";
-        ctx.strokeRect(0, 0, w, h);
+        //ctx.strokeStyle = "rgba(200,0,0,1)";
+        //ctx.strokeRect(0, 0, w, h);
         //ctx.fillStyle = "rgba(0, 0, 200, 0.5)";  
         //ctx.fillRect (30, 30, 55, 50);
         ctx.strokeStyle = that.settings.color.outline;
@@ -297,14 +330,7 @@ function ThermometerGuage(canvas, options) {
         var converted = parseFloat(value); // Make sure we have a number
         var decimal = (converted - parseInt(converted, 10));
         decimal = Math.round(decimal * 10);
-        //if (decimal == 5) {
-            return (parseInt(converted, 10) + 0.5);
-        //}
-        //if ((decimal < 3) || (decimal > 7)) {
-        //    return Math.round(converted);
-        //} else {
-        //    return (parseInt(converted, 10) + 0.5);
-        //}
+        return (parseInt(converted, 10) + 0.5);
     }
 
     function redrawFill() {
@@ -320,14 +346,12 @@ function ThermometerGuage(canvas, options) {
         fillTo = that.settings.fillTo;
 
         if (fillTo > _.bulbPercent) { //easy way, fill the whole bulb
-            //alert("Whole Bulb");
             ctx.beginPath();
             ctx.arc(w / 2, bVC, bR, Math.PI * 1.4, Math.PI * 1.6, true); // Outer circle  
             ctx.closePath();
             ctx.fill();
             var fillHeight = fillTo * _.innerHeight;
             var fillTop = _.bottomOfBulb - fillHeight;
-            //alert(fillHeight + ', ' + fillTop + ', ' + _.bottomOfBulb + ', ' + _.innerHeight);
             //Now, determine if the top bulb needs an arc
             if (fillTop >= _.topVerticalCenter) {
                 ctx.fillRect(w / 2 + Math.cos(Math.PI * 1.4) * bR, fillTop, (w / 2 + Math.cos(Math.PI * 1.6) * bR) - (w / 2 + Math.cos(Math.PI * 1.4) * bR), ((bVC + Math.sin(Math.PI * 1.4) * bR) - fillTop + 1));
@@ -339,19 +363,16 @@ function ThermometerGuage(canvas, options) {
                 ctx.beginPath();
                 //get the height
                 var angleHeight = fillTop - _.topVerticalCenter;
-                //alert(Math.asin(angleHeight/_.bulbRadius) + " - " + angleHeight);
                 ctx.arc(w / 2, tVC, _.topRadius, Math.asin(angleHeight / _.topRadius), Math.PI - Math.asin(angleHeight / _.topRadius), false);
                 ctx.closePath();
                 ctx.fill();
             }
 
         } else {
-            //alert("Partial Bulb");
             ctx.beginPath();
             //get the height
             var fillHeight = fillTo * _.innerHeight;
             var angleHeight = _.bottomOfBulb - fillHeight - _.bulbVerticalCenter;
-            //alert(Math.asin(angleHeight/_.bulbRadius) + " - " + angleHeight);
             ctx.arc(w / 2, bVC, bR, Math.asin(angleHeight / bR), Math.PI - Math.asin(angleHeight / bR), false); // Outer circle
             ctx.closePath();
             ctx.fill();
@@ -372,7 +393,7 @@ function ThermometerGuage(canvas, options) {
     function scaleValue(val) {
       var max = that.settings.max;
       var min = that.settings.min;
-      return (val * (max - min)) + min;   //scale it if max is defined
+      return (val * (max - min)) + min;
     }
 
     function drawLabels() {
@@ -388,7 +409,7 @@ function ThermometerGuage(canvas, options) {
         }
 
         // value text
-        valueText = formatNum(getFillTo(), 2); // + that.settings.unitsLabel;
+        valueText = formatNum(getFillTo(), 2) + " " + that.settings.unitsLabel;
         fontSize = that.settings.bulbRadius() / 2;
         styleText(that.ctx, fontSize.toFixed(0) * that.settings.scaleLabelText + 'px sans-serif');
         metrics = measureText(that.ctx, valueText);
@@ -434,18 +455,13 @@ function ThermometerGuage(canvas, options) {
         context.mozTextStyle = style; // FF3
     }
 
-
-
-
-
-
     this.setupOptions = setOptions;
+    this.setupOptions(options);
     this.draw = draw;
     //this.getFillTo = getFillTo;
     //this.clearCanvas = clearCanvas;
     //this.drawThermometerContainer = drawThermometerContainer;
     //this.redrawFill = redrawFill;
-    this.setupOptions(options);
 
     return this;
 }
