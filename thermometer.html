@@ -1,498 +1,132 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <title> Thermometer Example</title>
-  
-  <script type='text/javascript' src='http://code.jquery.com/jquery-1.5.2.js'></script>
-  
-  <link rel="stylesheet" type="text/css" href="/css/normalize.css">
-  <link rel="stylesheet" type="text/css" href="/css/result-light.css">
-  
-  <style type='text/css'>
-    
+<meta http - equiv = "content-type"content = "text/html; charset=UTF-8">
+<title> Thermometer Example </title>
 
-  </style>
+  <!-- <script type='text/javascript' src='http://code.jquery.com/jquery-1.5.2.js'></script> -->
+  <script type='text/javascript' src='thermometer.js'></script>
+<link rel = "stylesheet"type = "text/css"href = "/css/normalize.css">
+<link rel = "stylesheet"type = "text/css"href = "/css/result-light.css">
 
-  
+<style type = 'text/css'>
 
 
-<script type='text/javascript'>//<![CDATA[ 
-$(window).load(function(){
-//Sample to create a thermometer
-//var _ = {
-//    bulbRadius: 20
-//}
-$(function() {
-    //ctx = $('#demo')[0].getContext('2d');
-    var w = $('#demo').width();
-    var h = $('#demo').height();
-
-    var g = new ThermometerGuage($('#demo')[0], {
-        w: w,
-        h: h,
-        color: {
-            label: 'rgba(45,45,45,1)'
-        },
-        centerTicks: false,
-        majorTicks: 3,
-        minorTicks: 4,
-        max: 100,
-        min:25,
-        scaleTickLabelText: 1.75,
-        scaleLabelText: 1.2,
-        scaleTickWidth: 1.5,
-        unitsLabel: "lbs"
-    });
+</style>
 
 
-    //g.drawThermometerContainer();
-    //_.ctx = ctx;
-    //_.w = w;
-    //_.h = h;
-    g.draw($('#fillTo').val());
-    //g.redrawFill();
-    $('#fillToButton').click(function() {
-        //g.clearCanvas();
-        //g.drawThermometerContainer();
-        g.draw($('#fillTo').val());
-        //g.redrawFill();
-    });
-    $('#fillTo').change(function() {
-        //g.clearCanvas();
-        //g.drawThermometerContainer();
-        g.draw($('#fillTo').val());
-        //g.redrawFill();
-    });
-
-});
-
-
-$(function() {
-    //ctx = $('#demo')[0].getContext('2d');
-    var w = $('#demo2').width();
-    var h = $('#demo2').height();
-
-    var g2 = new ThermometerGuage($('#demo2')[0], {
-        scaleLabelText: 0.9,
-        unitsLabel: "pH"
-        //color: {
-        //    fill: "rgba(0,255,0,1)",
-        //    label: '#999'
-        //},
-        //bulbRadiusByHeight: true
-    });
-
-
-    //g2.drawThermometerContainer();
-    //_.ctx = ctx;
-    //_.w = w;
-    //_.h = h;
-    g2.draw($('#fillTo2').val());
-    //g2.redrawFill();
-    $('#fillToButton2').click(function() {
-        //g2.clearCanvas();
-        //g2.drawThermometerContainer();
-        g2.draw($('#fillTo2').val());
-        //g2.redrawFill();
-    });
-    
-    $('#fillTo2').change(function() {
-        //g.clearCanvas();
-        //g.drawThermometerContainer();
-        g2.draw($('#fillTo2').val());
-        //g.redrawFill();
-    });
-    
-
-});
-
-
-function ThermometerGuage(canvas, options) {
-    var that = this;
-    this.ctx = canvas.getContext('2d');
-    this.settings = {
-        w: canvas.width,
-        h: canvas.height,
-        ctx: this.ctx,
-        bulbRadius: function() {
-                return ((this.bulbRadiusByHeight || false) ? this.h : this.w) * this.bulbRadiusProportion;
-            },
-        color: {}
-    };
-    //this.settings = {
-    //    w: canvas.width,
-    //    h: canvas.height,
-    //    max: 1,
-    //    min: 0,
-    //    gradient: false,
-    //    opacity: 180,
-    //    debug: false,
-    //    ctx: this.ctx,
-    //    color: {
-    //        fill: '#ff0000',
-    //        label: 'rgba(45,45,45,1)',
-    //        outline: 'rgba(0,0,0,0.5)',
-    //        outlineFill: 'rgba(0,128,255,0.2)',
-    //        tick: 'black'
-    //    },
-    //    bulbRadiusProportion: 0.1,
-    //    bulbRadiusByHeight: false,
-    //    bulbRadius: function() {
-    //        return ((this.bulbRadiusByHeight || false) ? this.h : this.w) * this.bulbRadiusProportion;
-    //    },
-    //    majorTicks: 5,
-    //    minorTicks: 4,
-    //    centerTicks: false,
-    //    scaleTickLabelText: 1,
-    //    scaleLabelText: 1,
-    //    scaleTickWidth: 1
-    //
-    //};
-    
-    function draw(val) {
-        var max = that.settings.max;
-        var min = that.settings.min;
-        
-        that.settings.fillToInput = val;
-        if (val > max) 
-          that.settings.fillTo = 1;
-        else if (val < min) 
-          that.settings.fillTo = 0;
-        else
-          that.settings.fillTo = ((val - min) / (max - min));
-        
-        clearCanvas();
-        drawThermometerContainer();
-        redrawFill();
-    };
-
-    function getFillTo() {
-        return that.settings.fillToInput;
-    };
-
-    function fillText(context, text, px, py) {
-        var width;
-        if (context.fillText) {
-            return context.fillText(text, px, py);
-        } else if (context.mozDrawText) { //FF < 3.5
-            context.save();
-            context.translate(px, py);
-            width = context.mozDrawText(text);
-            context.restore();
-            return width;
-        }
-        throw "fillText() not supported!";
-    };
-
-    function clearCanvas() {
-        that.ctx.clearRect(0, 0, that.settings.w, that.settings.h);
-    };
-
-    function setOptions(options) {
-        //jQuery.extend(true, that.settings, options);  //the easy way, but depends on jQuery
-            options.color = options.color || {};
-            that.settings.w                     =  options.w                     || that.settings.w;
-            that.settings.h                     =  options.h                     || that.settings.h;
-            that.settings.ctx                   =  options.ctx                   || that.settings.ctx;
-            that.settings.max                   =  options.max                   || that.settings.max                    ||  1;
-            that.settings.min                   =  options.min                   || that.settings.min                    ||  0;
-            that.settings.gradient              =  options.gradient              || that.settings.gradient               ||  false;
-            that.settings.opacity               =  options.opacity               || that.settings.opacity                ||  180;
-            that.settings.debug                 =  options.debug                 || that.settings.debug                  ||  false;
-            that.settings.color.fill            =  options.color.fill            || that.settings.color.fill             ||  '#ff0000';
-            that.settings.color.label           =  options.color.label           || that.settings.color.label            ||  'rgba(45,45,45,1)';
-            that.settings.color.outline         =  options.color.outline         || that.settings.color.outline          ||  'rgba(0,0,0,0.5)';
-            that.settings.color.outlineFill     =  options.color.outlineFill     || that.settings.color.outlineFill      ||  'rgba(0,128,255,0.2)';
-            that.settings.color.tick            =  options.color.tick            || that.settings.color.tick             ||  'black';
-            that.settings.bulbRadiusProportion  =  options.bulbRadiusProportion  || that.settings.bulbRadiusProportion   ||  0.1;
-            that.settings.bulbRadiusByHeight    =  options.bulbRadiusByHeight    || that.settings.bulbRadiusByHeight     ||  false;
-            that.settings.majorTicks            =  options.majorTicks            || that.settings.majorTicks             ||  5;
-            that.settings.minorTicks            =  options.minorTicks            || that.settings.minorTicks             ||  4;
-            that.settings.centerTicks           =  options.centerTicks           || that.settings.centerTicks            ||  false;
-            that.settings.scaleTickLabelText    =  options.scaleTickLabelText    || that.settings.scaleTickLabelText     ||  1;
-            that.settings.scaleLabelText        =  options.scaleLabelText        || that.settings.scaleLabelText         ||  1;
-            that.settings.scaleTickWidth        =  options.scaleTickWidth        || that.settings.scaleTickWidth         ||  1;
-            that.settings.unitsLabel            =  options.unitsLabel            || that.settings.unitsLabel             ||  "";
-
-        var config = that.settings;
-        var h = config.h;
-        var bR = config.bulbRadius(); //20
-        var tR = config.topRadius = Math.cos(Math.PI * 1.6) * bR;
-        var bOR = config.bulbOutsideRadius = bR * 1.3; //26
-        var bVC = config.bulbVerticalCenter = h - bOR - 1; 
-        var tVC = config.topVerticalCenter = bR * 0.3 + bOR - bR + 1;
-        config.innerHeight = bVC - tVC + bR + Math.cos(Math.PI * 1.6) * bR;
-        config.topOfBulb = bVC + Math.sin(Math.PI * 1.4) * bR;
-        config.topOfOutsideBulb = bVC + Math.sin(Math.PI * 1.35) * bOR;
-        config.bottomOfBulb = bVC + bR;
-        config.innerTop = tVC - tR;
-        config.bulbPercent = (config.bottomOfBulb - config.topOfBulb) / config.innerHeight;
-    };
-
-    function drawThermometerContainer() {
-        var ctx = that.ctx;
-        var w = that.settings.w;
-        var h = that.settings.h;
-        var config = that.settings;
-
-        //var bulbRadius = bR = config.bulbRadius = ((w<h)?w:h)*0.1; //20
-        var bR = config.bulbRadius(); //20
-        var tR = config.topRadius;
-        var bOR = config.bulbOutsideRadius; //26
-        var bVC = config.bulbVerticalCenter; // (padding) // This was 160 before making derived;
-        var tVC = config.topVerticalCenter;
-        
-        ctx.save();
-        //ctx.strokeStyle = "rgba(200,0,0,1)";
-        //ctx.strokeRect(0, 0, w, h);
-        //ctx.fillStyle = "rgba(0, 0, 200, 0.5)";  
-        //ctx.fillRect (30, 30, 55, 50);
-        ctx.strokeStyle = that.settings.color.outline;
-        ctx.fillStyle = that.settings.color.outlineFill;
-        
-        //Draw the outer thermometer outline
-        ctx.beginPath();
-        ctx.arc(w / 2, bVC, bOR, Math.PI * 1.35, Math.PI * 1.65, true); // Outer circle  
-        ctx.lineTo(w / 2 + Math.cos(Math.PI * 1.65) * bOR, tVC);
-        ctx.arc(w / 2, tVC, Math.cos(Math.PI * 1.65) * bOR, 0, Math.PI, true);
-        ctx.lineTo(w / 2 + Math.cos(Math.PI * 1.35) * bOR, bVC + Math.sin(Math.PI * 1.35) * bOR);
-
-        ctx.closePath();
-        
-        ctx.stroke();
-        ctx.fill();
-        
-        //Draw the inner thermometer outline
-        ctx.fillStyle = "rgba(0,0,0,1)";
-        ctx.beginPath();
-        
-        ctx.moveTo(w / 2 + Math.cos(Math.PI * 1.4) * bR, bVC + Math.sin(Math.PI * 1.4) * bR);
-        ctx.arc(w / 2, bVC, bR, Math.PI * 1.4, Math.PI * 1.6, true); // Outer circle  
-        ctx.lineTo(w / 2 + Math.cos(Math.PI * 1.6) * bR, tVC);
-        ctx.arc(w / 2, tVC, Math.cos(Math.PI * 1.6) * bR, 0, Math.PI, true);
-        ctx.lineTo(w / 2 + Math.cos(Math.PI * 1.4) * bR, bVC + Math.sin(Math.PI * 1.4) * bR);
-
-        ctx.closePath();
-
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.fill();
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.stroke();
-        ctx.restore();
-        
-        
-
-        //drawTick(0.25);
-        //drawTick(0.5);
-        //drawTick(0.75);
-        
-    };
-
-    function drawTick(y, centerTicks, lineWidth, labelText) {
-        var ctx = that.ctx;
-        var _ = that.settings;
-        var w = that.settings.w;
-        var bOR = _.bulbOutsideRadius;
-        var scaleFactor = _.scaleTickWidth;
-        var tickWidth = _.bulbRadius() - _.bulbOutsideRadius;
-        
-        //Make sure the ticks are on half pixels so the lines are rendered fine.
-        cy = _.innerTop + _.innerHeight * y;
-        cy = pushToHalf(cy);
-        //if (cy == cy.toFixed(1)) cy += 0.5;
-        var angleHeight = _.bottomOfBulb - cy - _.bulbVerticalCenter;
-        if (_.centerTicks) {
-            cx = w / 2 - tickWidth / 2;
-        } else if (cy > _.topOfOutsideBulb) {
-            cx = w / 2 - Math.cos(Math.asin((cy - _.bulbVerticalCenter) / bOR)) * bOR - bOR * 0.1;
-        } else {
-            cx = w / 2 + Math.cos(Math.PI * 1.35) * bOR - bOR * 0.1;
-        }
-        ctx.save();
-        ctx.strokeStyle = _.color.tick;
-        ctx.lineWidth = lineWidth;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(cx + (tickWidth * scaleFactor), cy);
-
-        ctx.closePath();
-
-        ctx.stroke();
-        if (labelText != null) {
-          drawTickLabel(cx + (tickWidth * scaleFactor) * 2 , cy, labelText, -tickWidth);
-        }
-        ctx.restore();
-
-    }
-
-    function pushToHalf(value) {
-        var converted = parseFloat(value); // Make sure we have a number
-        var decimal = (converted - parseInt(converted, 10));
-        decimal = Math.round(decimal * 10);
-        return (parseInt(converted, 10) + 0.5);
-    }
-
-    function redrawFill() {
-        var ctx = that.ctx;
-        var w = that.settings.w;
-        var h = that.settings.h;
-        var _ = that.settings;
-        var bR = _.bulbRadius();
-        var bVC = _.bulbVerticalCenter;
-        var tVC = _.topVerticalCenter;
-        ctx.strokeStyle = that.settings.color.fill;
-        ctx.fillStyle = that.settings.color.fill;
-        fillTo = that.settings.fillTo;
-
-        if (fillTo > _.bulbPercent) { //easy way, fill the whole bulb
-            ctx.beginPath();
-            ctx.arc(w / 2, bVC, bR, Math.PI * 1.4, Math.PI * 1.6, true); // Outer circle  
-            ctx.closePath();
-            ctx.fill();
-            var fillHeight = fillTo * _.innerHeight;
-            var fillTop = _.bottomOfBulb - fillHeight;
-            //Now, determine if the top bulb needs an arc
-            if (fillTop >= _.topVerticalCenter) {
-                ctx.fillRect(w / 2 + Math.cos(Math.PI * 1.4) * bR, fillTop, (w / 2 + Math.cos(Math.PI * 1.6) * bR) - (w / 2 + Math.cos(Math.PI * 1.4) * bR), ((bVC + Math.sin(Math.PI * 1.4) * bR) - fillTop + 1));
-            } else {
-                //It does.  Fill the rectangle first
-                ctx.fillRect(w / 2 + Math.cos(Math.PI * 1.4) * bR, _.topVerticalCenter, (w / 2 + Math.cos(Math.PI * 1.6) * bR) - (w / 2 + Math.cos(Math.PI * 1.4) * bR), ((bVC + Math.sin(Math.PI * 1.4) * bR) - _.topVerticalCenter + 1));
-
-                //Now, draw the top arc
-                ctx.beginPath();
-                //get the height
-                var angleHeight = fillTop - _.topVerticalCenter;
-                ctx.arc(w / 2, tVC, _.topRadius, Math.asin(angleHeight / _.topRadius), Math.PI - Math.asin(angleHeight / _.topRadius), false);
-                ctx.closePath();
-                ctx.fill();
-            }
-
-        } else {
-            ctx.beginPath();
-            //get the height
-            var fillHeight = fillTo * _.innerHeight;
-            var angleHeight = _.bottomOfBulb - fillHeight - _.bulbVerticalCenter;
-            ctx.arc(w / 2, bVC, bR, Math.asin(angleHeight / bR), Math.PI - Math.asin(angleHeight / bR), false); // Outer circle
-            ctx.closePath();
-            ctx.fill();
-        }
-        var majorTicksOffset = 1 / (that.settings.majorTicks - 1);
-        var minorTicksOffset = majorTicksOffset / (that.settings.minorTicks + 1);
-        for (var i = 0; i <= 1; i += majorTicksOffset) {
-            drawTick(1-i, that.settings.centerTicks, 3, scaleValue(i));
-            if (i < 1) {
-              for (var j = minorTicksOffset; j < majorTicksOffset; j += minorTicksOffset) {
-                drawTick(1 - (i + j) , that.settings.centerTicks, 1, scaleValue(i + j));
-              }
-            }
-        }
-        drawLabels();
-    };
-    
-    function scaleValue(val) {
-      var max = that.settings.max;
-      var min = that.settings.min;
-      return (val * (max - min)) + min;
-    }
-
-    function drawLabels() {
-        var deg, fontSize, metrics, valueText;
-
-        function formatNum(value, decimals) {
-            var ret = parseFloat(value).toFixed(decimals);
-            while ((decimals > 0) && ret.match(/^\d+\.(\d+)?0$/)) {
-                decimals -= 1;
-                ret = parseFloat(value).toFixed(decimals);
-            }
-            return ret;
-        }
-
-        // value text
-        valueText = formatNum(getFillTo(), 2) + " " + that.settings.unitsLabel;
-        fontSize = that.settings.bulbRadius() / 2;
-        styleText(that.ctx, fontSize.toFixed(0) * that.settings.scaleLabelText + 'px sans-serif');
-        metrics = measureText(that.ctx, valueText);
-
-        that.ctx.fillStyle = that.settings.color.label;
-        that.ctx.textBaseline = 'middle';
-        fillText(that.ctx, valueText, that.settings.w / 2 - metrics / 2, that.settings.bulbVerticalCenter);
-    }
-    
-    function drawTickLabel(cx, cy, valueText, fontSize) {
-        var deg, fontSize, metrics, valueText;
-
-        function formatNum(value, decimals) {
-            var ret = parseFloat(value).toFixed(decimals);
-            while ((decimals > 0) && ret.match(/^\d+\.(\d+)?0$/)) {
-                decimals -= 1;
-                ret = parseFloat(value).toFixed(decimals);
-            }
-            return ret;
-        }
-
-        // value text
-        valueText = formatNum(valueText, 3);
-        styleText(that.ctx, fontSize.toFixed(0) * that.settings.scaleTickLabelText + 'px sans-serif');
-        metrics = measureText(that.ctx, valueText);
-
-        that.ctx.fillStyle = that.settings.color.label;
-        that.ctx.textBaseline = 'middle';
-        fillText(that.ctx, valueText, cx - metrics, cy);
-    }    
-
-    function measureText(context, text) {
-        if (context.measureText) {
-            return context.measureText(text).width; //-->
-        } else if (context.mozMeasureText) { //FF < 3.5
-            return context.mozMeasureText(text); //-->
-        }
-        throw "measureText() not supported!";
-    }
-
-    function styleText(context, style) {
-        context.font = style;
-        context.mozTextStyle = style; // FF3
-    }
-
-    this.setupOptions = setOptions;
-    this.setupOptions(options);
-    this.draw = draw;
-    //this.getFillTo = getFillTo;
-    //this.clearCanvas = clearCanvas;
-    //this.drawThermometerContainer = drawThermometerContainer;
-    //this.redrawFill = redrawFill;
-
-    return this;
-}
-
-
-
-
-function test() {
-    console.log("demo");
-    alert("test");
-}
-});//]]>  
-
-</script>
 
 
 </head>
 <body>
   <div>hello</div>
 <div>
-    <canvas id="demo" height="450" width="150"></canvas>
-    <input id="fillTo" value=".69" /><button id ='fillToButton'>Redraw Fill</button>
+    <canvas id="demo" height="450" width="400"></canvas><div style="clear:both"></div>
+    <input id="fillTo" value="45.69" /><button id ='fillToButton'>Redraw Fill</button>
 </div>
 
 <div>
-    <canvas id="demo2" height="250" width="250"></canvas>
-    <input id="fillTo2" value=".12" /><button id ='fillToButton2'>Redraw Fill</button>
+    <canvas id="demo2" height="250" width="250"></canvas><div style="clear:both"></div>
+    <input id="fillTo2" value="9.65" /><button id ='fillToButton2'>Redraw Fill</button>
 </div>
+
+
+<script type='text/javascript'>//<![CDATA[ 
+//$(window).load(function(){
+//Sample to create a thermometer
+//var _ = {
+//    bulbRadius: 20
+//}
+    //ctx = $('#demo')[0].getContext('2d');
+    //var w = $('#demo').width();
+    //var h = $('#demo').height();
+    var w = document.getElementById('demo').width;
+    var h = document.getElementById('demo').height;
+
+    var g = new ThermometerGuage(document.getElementById('demo'), {
+        w: w,
+        h: h,
+        color: {
+            label: 'rgba(255, 255, 255, .6)',
+            tickLabel: 'rgba(255, 0, 0, 0.4)'
+        },
+        centerTicks: false,
+        majorTicks: 3,
+        minorTicks: 4,
+        max: 100,
+        min:25,
+        scaleTickLabelText: 1.15,
+        scaleLabelText: 0.9,
+        scaleTickWidth: 1.5,
+        unitsLabel: " lbs"
+    });
+    var f = document.getElementById("fillTo").value;
+
+    //g.drawThermometerContainer();
+    //_.ctx = ctx;
+    //_.w = w;
+    //_.h = h;
+    g.setValue(f);
+    //g.redrawFill();
+    //$('#fillToButton').click(function() {
+    //    //g.clearCanvas();
+    //    //g.drawThermometerContainer();
+    //    g.draw($('#fillTo').val());
+    //    //g.redrawFill();
+    //});
+    //$('#fillTo').change(function() {
+    //    //g.clearCanvas();
+    //    //g.drawThermometerContainer();
+    //    g.draw($('#fillTo').val());
+    //    //g.redrawFill();
+    //});
+
+
+    //ctx = $('#demo')[0].getContext('2d');
+    var w = document.getElementById('demo2').width;
+    var h = document.getElementById('demo2').height;
+
+    var g2 = new ThermometerGuage(document.getElementById('demo2'), {
+        scaleLabelText: 0.9,
+        unitsLabel: " pH",
+        color: {
+            label: 'rgba(55, 255, 255, 1)',
+        },
+        max: 12,
+        min: 4
+        //color: {
+        //    fill: "rgba(0,255,0,1)",
+        //    label:'#999'
+        //},
+        //bulbRadiusByHeight: true
+    });
+    var f2 = document.getElementById("fillTo2").value;
+
+    //g2.drawThermometerContainer();
+    //_.ctx = ctx;
+    //_.w = w;
+    //_.h = h;
+    g2.setValue(f2);
+    //g2.redrawFill();
+    //$('#fillToButton2').click(function() {
+    //    //g2.clearCanvas();
+    //    //g2.drawThermometerContainer();
+    //    g2.draw($('#fillTo2').val());
+    //    //g2.redrawFill();
+    //});
+    //
+    //$('#fillTo2').change(function() {
+    //    //g.clearCanvas();
+    //    //g.drawThermometerContainer();
+    //    g2.draw($('#fillTo2').val());
+    //    //g.redrawFill();
+    //});
  
 
-  
+</script>
+
+
+
 </body>
 
 
