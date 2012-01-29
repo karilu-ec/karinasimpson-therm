@@ -2,11 +2,11 @@
  * Licensed under the MIT license:
  *   http://www.opensource.org/licenses/mit-license.php
  *
- * To use this, you need to include gauge.js, jquery, and this file:
+ * To use this, you need to include thermometer.js, jquery, and this file:
  *
  *   <script type="text/javascript" src="../jquery-1.6.min.js"></script>
- *   <script type="text/javascript" src="../jquery.thermometer.js"></script>
  *   <script type="text/javascript" src="../thermometer.js"></script>
+ *   <script type="text/javascript" src="../jquery.thermometer.js"></script>
  *
  *
  */
@@ -27,16 +27,7 @@
                 therm.setValue( value );
             }
         });
-    } //,
-    //draw : function( value ) {  
-    //    return this.each(function(){
-    //        var therm = $(this).data('therm');
-    //        if (therm != null) {        
-    //            therm.draw(value);
-    //        }
-    //    });
-    //}
-
+    } 
   };
 
   $.fn.thermometer = function( method ) {

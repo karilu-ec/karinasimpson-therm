@@ -10,35 +10,6 @@ function ThermometerGuage(canvas, options) {
             },
         color: {}
     };
-    //this.settings = {
-    //    w: canvas.width,
-    //    h: canvas.height,
-    //    max: 1,
-    //    min: 0,
-    //    gradient: false,
-    //    opacity: 180,
-    //    debug: false,
-    //    ctx: this.ctx,
-    //    color: {
-    //        fill: '#ff0000',
-    //        label: 'rgba(45, 45, 45, 1)',
-    //        outline: 'rgba(0, 0, 0, 0.5)',
-    //        outlineFill: 'rgba(0, 128, 255, 0.2)',
-    //        tick: 'black'
-    //    },
-    //    bulbRadiusProportion: 0.1,
-    //    bulbRadiusByHeight: false,
-    //    bulbRadius: function() {
-    //        return ((this.bulbRadiusByHeight || false) ? this.h : this.w) * this.bulbRadiusProportion;
-    //    },
-    //    majorTicks: 5,
-    //    minorTicks: 4,
-    //    centerTicks: false,
-    //    scaleTickLabelText: 1,
-    //    scaleLabelText: 1,
-    //    scaleTickWidth: 1
-    //
-    //};
 
     function setValue(val) {
         var max = that.settings.max;
@@ -81,7 +52,7 @@ function ThermometerGuage(canvas, options) {
 
     function setOptions(options) {
         var _ = that.settings;
-        //jQuery.extend(true, that.settings, options);  //the easy way, but depends on jQuery
+        //jQuery.extend(true, that.settings, options);  //the easy way, but depends on jQuery, so here's the hard way ;-(  ...
             options.color = options.color || {};
             _.w                     =  options.w                     || _.w;
             _.h                     =  options.h                     || _.h;
@@ -135,10 +106,6 @@ function ThermometerGuage(canvas, options) {
       var tVC = _.topVerticalCenter;
       
       ctx.save();
-      //ctx.strokeStyle = "rgba(200,0,0,1)";
-      //ctx.strokeRect(0, 0, w, h);
-      //ctx.fillStyle = "rgba(0, 0, 200, 0.5)";  
-      //ctx.fillRect (30, 30, 55, 50);
       ctx.strokeStyle = _.color.outline;
       ctx.fillStyle = _.color.outlineFill;
       
@@ -171,12 +138,6 @@ function ThermometerGuage(canvas, options) {
       ctx.globalCompositeOperation = 'source - over';
       ctx.stroke();
       ctx.restore();
-      
-      
-      
-      //drawTick(0.25);
-      //drawTick(0.5);
-      //drawTick(0.75);
 
     };
 
@@ -350,12 +311,8 @@ function ThermometerGuage(canvas, options) {
 
     this.setupOptions = setOptions;
     this.setupOptions(options);
-    //this.draw = draw;
+
     this.setValue = setValue;
     
-    //this.setValue = function (val) {
-    //  that.draw(val);
-    //}
-
     return this;
 }
